@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'cacaolinkapp.apps.CacaolinkappConfig'
+    'cacaolinkapp.apps.CacaolinkappConfig',
+    'auth_app'
 ]
 
 MIDDLEWARE = [
