@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'cacaolinkapp.apps.CacaolinkappConfig',
     'auth_app.apps.AuthAppConfig',
     'drf_yasg',
-    'django_filters'
+    'django_filters',
+    'messaging.apps.MessagingConfig'
 ]
 
 MIDDLEWARE = [
