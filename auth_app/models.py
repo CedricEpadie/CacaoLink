@@ -21,12 +21,14 @@ class CustomUserManager(BaseUserManager):
 
 # Definition du nouvel utilisateur par défaut
 class CustomUser(AbstractUser):
+    username = None
     email = models.EmailField(unique=True)
     telephone = models.CharField(max_length=11, blank=True, null=True)
     profile_picture = models.ImageField(blank=True, null=True, upload_to='profile_pictures')
+    is_acheteur = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['password']
+    REQUIRED_FIELDS = []
     
     objects = CustomUserManager()
     
@@ -35,10 +37,10 @@ class CustomUser(AbstractUser):
     
 class Agriculteurs(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='agriculteurs')
-    localisation = models.CharField(max_length=50)
+    localisation = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f'Agriculteur: {self.get_full_name()}'
+        return f'Agriculteur: {self.user.get_full_name()}'
     
 class Acheteurs(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='acheteurs')
@@ -53,4 +55,4 @@ class Acheteurs(models.Model):
     )
     
     def __str__(self):
-        return f'Acheteur: {self.get_full_name()} ({self.type})'
+        return f'Acheteur: {self.user.get_full_name()} ({self.type})'
