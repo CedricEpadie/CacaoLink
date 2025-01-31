@@ -53,10 +53,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'auth_app.apps.AuthAppConfig',
-    'messaging.apps.MessagingAppConfing',
+    'messaging.apps.MessagingConfig',
     'drf_yasg',
     'django_filters',
-    'notif_app'
+    'notif_app.apps.NotifAppConfig'
 ]
 
 MIDDLEWARE = [
