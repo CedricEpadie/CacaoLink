@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Spécifie à django que CustomUser est le nouveau model user
 AUTH_USER_MODEL = 'auth_app.CustomUser'
@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'cacaolinkapp.apps.CacaolinkappConfig',
     'auth_app.apps.AuthAppConfig',
     'drf_yasg',
     'django_filters'
