@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'auth_app.apps.AuthAppConfig',
     'drf_yasg',
     'django_filters',
-    'messaging.apps.MessagingConfig'
+    'messaging.apps.MessagingConfig',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -164,3 +165,5 @@ REST_FRAMEWORK = {
 #     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
 #     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 # }
+
+ASGI_APPLICATION = 'cacaolink.asgi.application'

@@ -33,8 +33,6 @@ def get_messages(request, user_id):
     serializer = MessageSerializer(messages, many=True)
     return Response(serializer.data)
 
-# messaging/views.py
-
 @api_view(['PATCH'])
 def mark_message_as_read(request, message_id):
     try:
