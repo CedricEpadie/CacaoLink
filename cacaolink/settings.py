@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'auth_app.apps.AuthAppConfig',
+    'messaging.apps.MessagingAppConfing',
     'drf_yasg',
     'django_filters',
     'notif_app'
