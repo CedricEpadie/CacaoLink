@@ -27,8 +27,16 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+# Spécifie à django que CustomUser est le nouveau model user
+AUTH_USER_MODEL = 'auth_app.CustomUser'
+
+# Spécifier à django les nouveaux backend pour l'authentification
+AUTHENTIFICATION_BACKENDS = [
+    'auth_app.backends.EmailBacken',
+    'django.contrib.auth.backends.ModelBackend'
+]
 
 # Application definition
 
@@ -41,14 +49,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'cacaolinkapp.apps.CacaolinkappConfig'
+    'auth_app.apps.AuthAppConfig',
+    'drf_yasg',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -138,14 +148,17 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     "http://localhost:8081",  # Flutter Web
 # ]
 
-# Definition des paramètre pour la sécurité
+# Definition des paramètres de restframework
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    # "DEFAULT_AUTHENTICATION_CLASSES": (
+    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
+    # ),
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend" # ici c'est pour le filtrage backend ça donne plus de possibilité de filtrage avec l'api (En testant vous allez voir)
+    ]
 }
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-}
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+# }

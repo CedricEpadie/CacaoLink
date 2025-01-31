@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CacaolinkappConfig(AppConfig):
+class AuthAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'cacaolinkapp'
+    name = 'auth_app'
