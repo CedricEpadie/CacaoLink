@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'messaging.apps.MessagingConfig',
     'drf_yasg',
     'django_filters',
-    'notif_app.apps.NotifAppConfig'
+    'notif_app.apps.NotifAppConfig',
+    'offers'
 ]
 
 MIDDLEWARE = [
