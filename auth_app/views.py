@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model, logout, login
 from . import models
 from . import serializers
 from .backends import EmailBackend
+from notif_app.utils import send_welcome_email
 
 User = get_user_model()
         
@@ -20,6 +21,9 @@ class RegisterViewSet(viewsets.ModelViewSet):
         serializer = serializers.RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            username = user.last_name
+            email = user.email
+            send_welcome_email(username, email)
             return Response(serializers.UserSerializer(user).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

@@ -1,0 +1,52 @@
+<!-- templates/emails/new_offer_email.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle offre disponible sur CacaoLink</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nouvelle offre disponible sur CacaoLink !</h1>
+        <p>Bonjour,</p>
+        <p>Une nouvelle offre de cacao a été publiée sur CacaoLink. Voici les détails :</p>
+        <ul>
+            <li><strong>Titre :</strong> {{ offer_title }}</li>
+            <li><strong>Description :</strong> {{ offer_description }}</li>
+            <li><strong>Prix :</strong> {{ offer_price }} FCFA</li>
+        </ul>
+        <p>Connectez-vous dès maintenant pour consulter cette offre et entrer en contact avec l'agriculteur.</p>
+        <a href="{{ offer_link }}" class="button">Voir l'offre</a>
+        <p>Cordialement,<br>L'équipe CacaoLink</p>
+    </div>
+</body>
+</html>
