@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
+import os
+import environ
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -52,7 +55,8 @@ INSTALLED_APPS = [
     'cacaolinkapp.apps.CacaolinkappConfig',
     'auth_app.apps.AuthAppConfig',
     'drf_yasg',
-    'django_filters'
+    'django_filters',
+    'notif_app'
 ]
 
 MIDDLEWARE = [
@@ -133,6 +137,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+env = environ.Env()
+env.read_env(os.path.join(BASE_DIR, '.env'))
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER')  
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD') 
+EMAIL_HOST = env("EMAIL_HOST") 
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_TLS=True
+EMAIL_USE_SSL = False
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
