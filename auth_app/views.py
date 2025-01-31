@@ -21,7 +21,7 @@ class RegisterViewSet(viewsets.ModelViewSet):
         serializer = serializers.RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            username = user.last_name
+            username = user.get_full_name()
             email = user.email
             send_welcome_email(username, email)
             return Response(serializers.UserSerializer(user).data, status=status.HTTP_201_CREATED)
@@ -34,7 +34,13 @@ class AgriculteurViewSet(viewsets.ModelViewSet):
     queryset = models.Agriculteurs.objects.all()
     serializer_class = serializers.AgriculteurSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'put', 'patch', 'delete']
+    http_method_names = ['get', 'patch', 'delete']
+    
+    def destroy(self, request, *args, **kwargs):
+        agriculteur = self.get_object()
+        customuser = User.objects.get(id=agriculteur.user.id)
+        customuser.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def partial_update(self, request, *args, **kwargs):
         agriculteur = self.get_object()
@@ -48,7 +54,13 @@ class AcheteurViewSet(viewsets.ModelViewSet):
     queryset = models.Acheteurs.objects.all()
     serializer_class = serializers.AcheteurSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'put', 'patch', 'delete']
+    http_method_names = ['get', 'patch', 'delete']
+    
+    def destroy(self, request, *args, **kwargs):
+        acheteur = self.get_object()
+        customuser = User.objects.get(id=acheteur.user.id)
+        customuser.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def partial_update(self, request, *args, **kwargs):
         acheteur = self.get_object()
