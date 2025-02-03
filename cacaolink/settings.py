@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_filters',
     'notif_app.apps.NotifAppConfig',
-    'offers'
+    'offers.apps.OffersConfig',
 ]
 
 MIDDLEWARE = [
