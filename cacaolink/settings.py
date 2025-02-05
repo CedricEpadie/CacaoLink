@@ -102,10 +102,10 @@ WSGI_APPLICATION = 'cacaolink.wsgi.application'
 #     }
 # }
 
-DATABASES_URL = config('DATABASE_URL')
+DATABASE_URL = config('DATABASE_URL')
 
 DATABASES = {
-    'default':dj_database_url.parse(DATABASES_URL)
+    'default':dj_database_url.parse(DATABASE_URL)
 }
 
 
