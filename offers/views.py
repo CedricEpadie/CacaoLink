@@ -15,6 +15,6 @@ class OfferSearchViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Offer.objects.all().order_by('-created_at')
     serializer_class = OfferSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['price', 'state', 'target']
+    filterset_fields = ['price', 'state', 'target', 'farmer']
     search_fields = ['description']
     ordering_fields = ['price', 'created_at']
