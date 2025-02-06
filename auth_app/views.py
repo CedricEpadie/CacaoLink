@@ -10,6 +10,9 @@ from . import serializers
 from .backends import EmailBackend
 from notif_app.utils import send_welcome_email
 
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
+
 User = get_user_model()
         
 class RegisterViewSet(viewsets.ModelViewSet):
@@ -92,9 +95,19 @@ class LoginView(APIView):
         
         if user is not None:
             login(request, user)
+            user_serializer = serializers.UserSerializer(user)  # Sérialisez l'objet utilisateur
             if user.is_acheteur:
-                return Response({'Redirect': 'acheteur'}, status=status.HTTP_200_OK)
+                return Response({
+                    'Redirect': 'acheteur',
+                    'user': user_serializer.data  # Retournez les données sérialisées de l'utilisateur
+                }, status=status.HTTP_200_OK)
             else:
-                return Response({'Redirect': 'agriculteur'}, status=status.HTTP_200_OK)
+                return Response({
+                    'Redirect': 'agriculteur',
+                    'user': user_serializer.data  # Retournez les données sérialisées de l'utilisateur
+                }, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'email ou mot de passe incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+        
+def csrf(request):
+    return JsonResponse({'csrfToken': get_token(request)})
