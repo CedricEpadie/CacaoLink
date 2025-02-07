@@ -1,69 +1,71 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+import time
+from asgiref.sync import sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
+from .models import Conversation, Message
 from django.contrib.auth.models import User
-from asgiref.sync import database_sync_to_async
 
-class MessageConsumer(AsyncWebsocketConsumer):
+class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # Obtenez l'identifiant de l'utilisateur depuis l'URL (par exemple, user1_user2)
-        user1 = self.scope['user'].username
-        
-        if not self.scope['user'].is_authenticated:
-            await self.close()  # Fermer la connexion si l'utilisateur n'est pas authentifié
-        
-        user2 = self.scope['url_route']['kwargs']['peer']
-
-        # Vérifier si user2 est un utilisateur valide
-        try:
-            peer_user = await database_sync_to_async(User.objects.get)(username=user2)
-        except User.DoesNotExist:
-            # Fermer la connexion si user2 n'existe pas et envoyer un message d'erreur
+        # Récupère l'ID de l'utilisateur connecté
+        self.user = self.scope['user']
+        if self.user.is_anonymous:
             await self.close()
-            return  # Sortir de la méthode
-
-        # Créer un nom de salle unique en triant les identifiants
-        self.room_name = "_".join(sorted([user1, user2]))
-        self.room_group_name = f'chat_{self.room_name}'
-
-        # Rejoindre le groupe de la conversation
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
-
-        # Accepter la connexion WebSocket
-        await self.accept()
+        else:
+            # Crée un groupe pour l'utilisateur
+            self.room_group_name = f"user_{self.user.id}"
+            await self.channel_layer.group_add(
+                self.room_group_name,
+                self.channel_name
+            )
+            await self.accept()
 
     async def disconnect(self, close_code):
-        # Quitter le groupe de la conversation
+        # Retire l'utilisateur du groupe
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
 
+    # Reçoit un message du WebSocket
     async def receive(self, text_data):
-        # Recevoir le message du client
         data = json.loads(text_data)
-        message = data['message']
-        sender = data['sender']  # Optionnel : qui envoie le message
-        
-        # Envoyer le message au groupe
+        receiver_id = data['receiver_id']
+        content = data['content']
+
+        # Enregistre le message dans la base de données
+        receiver = await User.objects.aget(id=receiver_id)
+        message = await Message.objects.acreate(
+            sender=self.user,
+            receiver=receiver,
+            content=content
+        )
+
+        # Récupérer ou créer la conversation
+        conversation, created = await sync_to_async(Conversation.objects.get_or_create)(
+            participants__in=[self.user, receiver]
+        )
+        if created:
+            conversation.participants.add(self.user, receiver)
+
+        conversation.last_message = message
+        conversation.updated_at = time.time()
+        await sync_to_async(conversation.save)()
+
+        # Envoie le message au destinataire via WebSocket
         await self.channel_layer.group_send(
-            self.room_group_name,
+            f"user_{receiver_id}",
             {
                 'type': 'chat_message',
-                'message': message,
-                'sender': sender  # Envoyer également l'expéditeur
+                'message': {
+                    'id': message.id,
+                    'sender': self.user.username,
+                    'content': content,
+                    'timestamp': str(message.timestamp),
+                }
             }
         )
 
+    # Envoie un message au WebSocket
     async def chat_message(self, event):
-        # Recevoir le message envoyé au groupe
-        message = event['message']
-        sender = event['sender']  # Recevoir l'expéditeur
-
-        # Envoyer le message au WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message,
-            'sender': sender  # Inclure l'expéditeur dans le message
-        }))
+        await self.send(text_data=json.dumps(event['message']))
